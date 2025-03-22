@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Billionaire Twins Countdown</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Baloo 2', sans-serif;
+      min-height: 100vh;
+      background: #000;
+    }
+
+    /* Background image from same folder */
+    body::before {
+      content: "";
+      background-image: url("blox-bg.jpg");
+      background-size: cover;
+      background-position: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.6;
+      z-index: -1;
+    }
+
+    .countdown-container {
+      background-color: rgba(255, 255, 255, 0.85);
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      padding: 2rem;
+      max-width: 500px;
+      margin: 3rem auto;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: #333;
+      margin-bottom: 1.5rem;
+    }
+
+    input[type="text"],
+    input[type="datetime-local"] {
+      font-family: inherit;
+      padding: 0.8rem;
+      width: 100%;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      border: 2px solid #a3d5ff;
+      border-radius: 10px;
+      background-color: #f8fbff;
+    }
+
+    .start-button {
+      background-color: #00bcd4;
+      color: white;
+      font-size: 1rem;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-bottom: 1.5rem;
+    }
+
+    .start-button:hover {
+      background-color: #00a2b5;
+    }
+
+    .timer-group {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 1rem;
+    }
+
+    .timer-segment {
+      text-align: center;
+    }
+
+    .timer-value {
+      font-size: 2.5rem;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    /* Brazilian & Swedish color themes */
+    #days {
+      color: #009739; /* Brazil green */
+    }
+
+    #minutes {
+      color: #009739;
+    }
+
+    #hours {
+      color: #005cbf; /* Sweden blue */
+    }
+
+    #seconds {
+      color: #ffcc00; /* Sweden yellow */
+    }
+
+    .timer-label {
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    #event-message {
+      margin-top: 1.2rem;
+      font-size: 1rem;
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+  <div class="countdown-container">
+    <h1>Billionaire Twins</h1>
+    <div class="input-section">
+      <input type="text" id="event-name" placeholder="Event Name (Blox Rivals eller BlocksCreate upgrades, kanskje?)" />
+    </div>
+    <div class="input-section">
+      <input type="datetime-local" id="datetime" />
+    </div>
+    <button class="start-button" id="start-countdown">Start Countdown</button>
+
+    <div id="countdown" style="display: none;">
+      <h2 id="countdown-title"></h2>
+      <div class="timer-group">
+        <div class="timer-segment">
+          <div id="days" class="timer-value">00</div>
+          <div class="timer-label">Days</div>
+        </div>
+        <div class="timer-segment">
+          <div id="hours" class="timer-value">00</div>
+          <div class="timer-label">Hours</div>
+        </div>
+        <div class="timer-segment">
+          <div id="minutes" class="timer-value">00</div>
+          <div class="timer-label">Minutes</div>
+        </div>
+        <div class="timer-segment">
+          <div id="seconds" class="timer-value">00</div>
+          <div class="timer-label">Seconds</div>
+        </div>
+      </div>
+      <div id="event-message">Let the countdown begin!</div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const datetimeInput = document.getElementById('datetime');
+      const eventNameInput = document.getElementById('event-name');
+      const startButton = document.getElementById('start-countdown');
+      const countdownTitle = document.getElementById('countdown-title');
+      const countdown = document.getElementById('countdown');
+      const daysEl = document.getElementById('days');
+      const hoursEl = document.getElementById('hours');
+      const minutesEl = document.getElementById('minutes');
+      const secondsEl = document.getElementById('seconds');
+      const eventMessage = document.getElementById('event-message');
+
+      let interval;
+
+      startButton.addEventListener('click', () => {
+        const eventDate = new Date(datetimeInput.value);
+        const now = new Date();
+
+        if (!datetimeInput.value || eventDate <= now) {
+          alert("Please choose a future date.");
+          return;
+        }
+
+        countdownTitle.textContent = `Countdown to ${eventNameInput.value || "something awesome!"}`;
+        countdown.style.display = 'block';
+
+        clearInterval(interval);
+        interval = setInterval(() => {
+          const now = new Date();
+          const timeLeft = eventDate - now;
+
+          if (timeLeft <= 0) {
+            clearInterval(interval);
+            eventMessage.textContent = "It’s time! Let’s go!";
+            daysEl.textContent = hoursEl.textContent = minutesEl.textContent = secondsEl.textContent = '00';
+            return;
+          }
+
+          const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+          daysEl.textContent = String(days).padStart(2, '0');
+          hoursEl.textContent = String(hours).padStart(2, '0');
+          minutesEl.textContent = String(minutes).padStart(2, '0');
+          secondsEl.textContent = String(seconds).padStart(2, '0');
+        }, 1000);
+      });
+    });
+  </script>
+</body>
+</html>
