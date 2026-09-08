@@ -1,10 +1,15 @@
-# countdown
+# Countdown
 
-*jCountdown Timer App**
+**A simple, self-contained countdown timer web app.** Set a target date and watch a live countdown — a lightweight utility with no dependencies.
 
-A simple countdown timer application.
+## Getting started
+
+Open `index.html` in any browser.
 
 ## Status
-Complete. Utility app for timing and countdowns.
 
-*"Built by João Caldas | joaoccaldas@gmail.com"**
+Complete — a small utility project.
+
+---
+
+Built by [João Caldas](https://github.com/joaoccaldas).
